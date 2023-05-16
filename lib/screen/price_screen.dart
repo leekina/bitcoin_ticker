@@ -1,12 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:convert';
-
-import 'package:bitcoin_ticker/model/coin_data.dart';
+import 'package:bitcoin_ticker/util/coin_data.dart';
+import 'package:bitcoin_ticker/util/http_request.dart';
+import 'package:bitcoin_ticker/util/private.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
-import 'package:http/http.dart' as http;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -15,6 +14,22 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
+  String coinValue = '?';
+
+  void getExchangerate() async {
+    HttpRequest httpRequest = HttpRequest(
+        url: '$path/exchangerate/BTC/$selectedCurrency?apikey=$apiKey');
+    var data = await httpRequest.getData();
+    setState(() {
+      coinValue = data['rate'].toStringAsFixed(2);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getExchangerate();
+  }
 
   DropdownButton<String> androidDropdownButton() {
     List<DropdownMenuItem<String>> dropdownItems = [];
@@ -69,7 +84,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  '1 BTC = $coinValue $selectedCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
