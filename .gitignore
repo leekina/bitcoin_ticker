@@ -42,4 +42,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-lib/util/http_controller.dart
+lib/util/private.dart
