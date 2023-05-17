@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:bitcoin_ticker/component/cryptoCard.dart';
 import 'package:bitcoin_ticker/util/coin_data.dart';
 import 'package:bitcoin_ticker/util/http_request.dart';
 import 'package:bitcoin_ticker/util/private.dart';
@@ -21,7 +22,7 @@ class _PriceScreenState extends State<PriceScreen> {
         url: '$path/exchangerate/BTC/$selectedCurrency?apikey=$apiKey');
     var data = await httpRequest.getData();
     setState(() {
-      coinValue = data['rate'].toStringAsFixed(2);
+      coinValue = data['rate'].toStringAsFixed(0);
     });
   }
 
@@ -29,6 +30,19 @@ class _PriceScreenState extends State<PriceScreen> {
   void initState() {
     super.initState();
     getExchangerate();
+  }
+
+  List<CryptoCard> cryptoCardList() {
+    List<CryptoCard> cryptoCardList = [];
+    for (String crypto in cryptoList) {
+      CryptoCard cryptoCard = CryptoCard(
+        coinName: crypto,
+        coinValue: coinValue,
+        selectedCurrency: selectedCurrency,
+      );
+      cryptoCardList.add(cryptoCard);
+    }
+    return cryptoCardList;
   }
 
   DropdownButton<String> androidDropdownButton() {
@@ -48,6 +62,7 @@ class _PriceScreenState extends State<PriceScreen> {
           setState(() {
             selectedCurrency = value!;
           });
+          getExchangerate();
         });
   }
 
@@ -58,7 +73,12 @@ class _PriceScreenState extends State<PriceScreen> {
     }
     return CupertinoPicker(
       itemExtent: 32,
-      onSelectedItemChanged: (selectedIndex) {},
+      onSelectedItemChanged: (selectedIndex) {
+        setState(() {
+          selectedCurrency = currenciesList[selectedIndex];
+        });
+        getExchangerate();
+      },
       children: pickerItems,
     );
   }
@@ -72,27 +92,10 @@ class _PriceScreenState extends State<PriceScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = $coinValue $selectedCurrency',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: cryptoCardList(),
           ),
           Container(
             height: 150.0,
