@@ -1,4 +1,0 @@
-// class Coin {
-//   String name;
-  
-// }
