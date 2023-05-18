@@ -14,7 +14,7 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = 'USD';
+  String selectedCurrency = 'KRW';
   List<String> coinValue = List.filled(3, '?');
 
   void getExchangerate() async {
@@ -22,12 +22,15 @@ class _PriceScreenState extends State<PriceScreen> {
     for (String crypto in cryptoList) {
       HttpRequest httpRequest = HttpRequest(
           url: '$path/exchangerate/$crypto/$selectedCurrency?apikey=$apiKey');
-      var data = await httpRequest.getData();
-      setState(() {
-        coinValue[index] = data['rate'].toStringAsFixed(0);
-      });
-      index++;
+      var data = await httpRequest.getData(crypto);
+      if (data != null) {
+        setState(() {
+          coinValue[index] = data['rate'].toStringAsFixed(0);
+        });
+        index++;
+      } else {}
     }
+    print(coinValue);
   }
 
   @override
@@ -38,15 +41,13 @@ class _PriceScreenState extends State<PriceScreen> {
 
   List<CryptoCard> cryptoCardList() {
     List<CryptoCard> cryptoCardList = [];
-    for (String crypto in cryptoList) {
-      int index = 0;
+    for (int i = 0; i < cryptoList.length; i++) {
       CryptoCard cryptoCard = CryptoCard(
-        coinName: crypto,
-        coinValue: coinValue[index],
+        coinName: cryptoList[i],
+        coinValue: coinValue[i],
         selectedCurrency: selectedCurrency,
       );
       cryptoCardList.add(cryptoCard);
-      index++;
     }
     return cryptoCardList;
   }

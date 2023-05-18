@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CryptoCard extends StatelessWidget {
+class CryptoCard extends StatefulWidget {
   const CryptoCard({
     Key? key,
     required this.coinName,
@@ -12,6 +12,11 @@ class CryptoCard extends StatelessWidget {
   final String coinValue;
   final String selectedCurrency;
 
+  @override
+  State<CryptoCard> createState() => _CryptoCardState();
+}
+
+class _CryptoCardState extends State<CryptoCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,7 +30,7 @@ class CryptoCard extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
           child: Text(
-            '1 $coinName = $coinValue $selectedCurrency',
+            '1 ${widget.coinName} = ${widget.coinValue} ${widget.selectedCurrency}',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20.0,
