@@ -22,7 +22,7 @@ class _PriceScreenState extends State<PriceScreen> {
     for (String crypto in cryptoList) {
       HttpRequest httpRequest = HttpRequest(
           url: '$path/exchangerate/$crypto/$selectedCurrency?apikey=$apiKey');
-      var data = await httpRequest.getData(crypto);
+      var data = await httpRequest.getDataFromDummy(crypto);
       if (data != null) {
         setState(() {
           coinValue[index] = data['rate'].toStringAsFixed(0);
